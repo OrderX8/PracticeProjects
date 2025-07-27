@@ -3,4 +3,4 @@ This is a list of the projects I make for practice.
 
 | Project Name  | Link  |
 | --- | --- |
-| Minimal Encrypter | [Link](MinimalEncrypter)  |
+| Minimal Encryptor | [Link](MinimalEncryptor)  |
