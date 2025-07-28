@@ -1,5 +1,5 @@
 # PracticeProjects
-This is a list of the projects I make for practice.
+This is a list of the projects I made for practice.
 
 | Project Name  | Link  |
 | --- | --- |
