@@ -1,8 +1,11 @@
+# Made by OrderX
+
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import os
 import base64
+import sys
 
 def generate_key(password):
 
@@ -12,9 +15,9 @@ def generate_key(password):
 
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
-        length=32,  # Fernet needs a 32-byte key
+        length=32,
         salt=salt,
-        iterations=100000,  # Number of iterations for security
+        iterations=100000,
     )
 
     key = base64.urlsafe_b64encode(kdf.derive(password))
@@ -45,7 +48,8 @@ def decrypt_file(encrypted_file_path, key):
     
     decrypted_data = fernet.decrypt(encrypted_data)
     
-    decrypted_file_path = encrypted_file_path.replace('.encrypted', '.decrypted')
+    base, ext = os.path.splitext(encrypted_file_path.replace('.encrypted', ''))
+    decrypted_file_path = f"{base}-decrypted{ext}"
     with open(decrypted_file_path, 'wb') as file:
         file.write(decrypted_data)
     return decrypted_file_path
@@ -58,10 +62,20 @@ def remove_outer_quotes(line):
 def main():
 
     action = input("Do you want to (e)ncrypt or (d)ecrypt a file? ").lower()
+
+    if action not in ('e', 'd'):
+        print("Invalid choice. Please choose 'e' or 'd'.")
+        return
+
     file_path = input("Enter your file path: ")
-    password = input("Enter your password: ")
 
     file_path = remove_outer_quotes(file_path)
+
+    if not os.path.exists(file_path):
+        print("Path not found.")
+        return
+
+    password = input("Enter your password: ")
 
     if action == 'e':
         key, salt = generate_key(password)
@@ -77,7 +91,6 @@ def main():
             return
         with open(salt_file, 'rb') as salt_file_obj:
             salt = salt_file_obj.read()
-        # Derive the key using the original salt
         kdf = PBKDF2HMAC(
             algorithm=hashes.SHA256(),
             length=32,
@@ -88,9 +101,17 @@ def main():
         decrypted_file = decrypt_file(file_path, key)
         print(f"File decrypted successfully: {decrypted_file}")
     else:
+        # Error A2
+        print("Error A2")
         print("Invalid choice. Please choose 'e' or 'd'.")
+
+    askContinueProgram = input("Do you want to do something else? (Type 'y' if you want to continue, type anything else to quit)")
+
+    if askContinueProgram.lower() == 'y':
+        main()
 
     return
 
 if __name__ == "__main__":
     main()
+    sys.exit()
